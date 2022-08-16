@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>COVID-19 Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+    <div class="header">
+        <div class="title" style="display: inline-block;">COVID-19 Dashboard</div>
+        <div class="float-right country-select">
+            <label for="countries">Select Country</label>
+
+            <select name="countries" id="countries">
+                <option value="india">India</option>
+                <option value="australia">Australia</option>
+                <option value="united-kingdom">United Kingdom</option>
+                <option value="united-states">USA</option>
+                <option value="canada">Canada</option>
+                <option value="france">France</option>
+                <option value="italy">Italy</option>
+                <option value="spain">Spain</option>
+            </select>
+
+            <button type="button" class="btn btn-success ml-3" data-toggle="modal" data-target="#exampleModal3">
+               About
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 left-container">
+            <div class="details-container">
+                <div class="country-div">
+                    <img src="https://www.countryflags.io/IN/flat/32.png"> <span class="country-name">India</span>
+                </div>
+                <div class="active-cases card mt-3">
+                    <div class="card-header active-view" role="tab" id="headingTwo">
+                        <h5 class="mb-0">
+                            <a id="active-card" class="collapsed card-title color-white" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Active
+                            </a>
+                            <span id="active-count" class="case-count float-right">
+                                    -
+                                </span>
+                        </h5>
+                    </div>
+                </div>
+
+                <div id="accordion" role="tablist" class="case-summary-container">
+                    <div class="card">
+                        <div class="card-header confirmed-view" role="tab" id="headingOne">
+                            <h5 class="mb-0">
+                                <a id='confirmed-card' class="card-title color-white" data-toggle="collapse" href="#container-confirmed" aria-expanded="true" aria-controls="container-confirmed">
+                                    Confirmed
+                                </a>
+                                <span id="confirmed-count" class="case-count float-right">
+                                    -
+                                </span>
+                            </h5>
+                        </div>
+
+                        <div id="container-confirmed" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-7">
+                                        <canvas class="line-chart" id="confirmed-case-chart" width="400" height="400"></canvas>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div>
+                                            <div class="text-center">
+                                                <label for="confirm-select-day-range">Select Days</label>
+
+                                                <select name="day-range" id="confirm-select-day-range">
+                                                    <option value="30">Last 30 Days</option>
+                                                    <option value="60">Last 60 Days</option>
+                                                    <option value="90">Last 90 Days</option>
+                                                    <option value="120">Last 120 Days</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="label-total-cases label-total-confirmed">
+                                                Total Confirmed in last 30 days
+                                            </div>
+                                            <div id="range-confirmed-count" class="range-total-cases color-confirmed">
+                                                -
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header recovered-view" role="tab" id="headingThree">
+                            <h5 class="mb-0">
+                                <a id="recovered-card" class="collapsed card-title color-white" data-toggle="collapse" href="#container-recover" aria-expanded="false" aria-controls="collapseTwo">
+                                    Recovered
+                                </a>
+                                <span  id="recovered-count" class="case-count float-right">
+                                    -
+                                </span>
+                            </h5>
+                        </div>
+                        <div id="container-recover" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-7">
+                                        <canvas class="line-chart" id="recovered-case-chart" width="400" height="400"></canvas>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div>
+                                            <div class="text-center">
+                                                <label for="confirm-select-day-range">Select Days</label>
+
+                                                <select name="day-range" id="recovered-select-day-range">
+                                                    <option value="30">Last 30 Days</option>
+                                                    <option value="60">Last 60 Days</option>
+                                                    <option value="90">Last 90 Days</option>
+                                                    <option value="120">Last 120 Days</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="label-total-cases label-total-recovered">
+                                                Total Recovered in last 30 days
+                                            </div>
+                                            <div id="range-recovered-count" class="range-total-cases color-recovered">
+                                                -
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header death-view" role="tab" id="headingFour">
+                            <h5 class="mb-0">
+                                <a id="death-card" class="collapsed card-title color-white" data-toggle="collapse" href="#container-death" aria-expanded="false" aria-controls="collapseTwo">
+                                    Deaths
+                                </a>
+                                <span id="death-count" class="case-count float-right">
+                                    -
+                                </span>
+                            </h5>
+                        </div>
+                        <div id="container-death" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-7">
+                                            <canvas class="line-chart" id="death-case-chart" width="400" height="400"></canvas>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <div>
+                                                <div class="text-center">
+                                                    <label for="confirm-select-day-range">Select Days</label>
+
+                                                    <select name="day-range" id="death-select-day-range">
+                                                        <option value="30">Last 30 Days</option>
+                                                        <option value="60">Last 60 Days</option>
+                                                        <option value="90">Last 90 Days</option>
+                                                        <option value="120">Last 120 Days</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="label-total-cases label-total-deaths">
+                                                    Total Deaths in last 30 days
+                                                </div>
+                                                <div id="range-death-count" class="range-total-cases color-death">
+                                                    -
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 right-container">
+            <div class="resources-container">
+                <div  class="resources">
+                    Resources
+                </div>
+                <div class="card resource-card">
+
+                    <div class="card-body">
+                        <h4 class="card-title">Advice for the Public</h4>
+                        <p class="card-text">
+                            Coronavirus disease (COVID-19) advice for the public from the World Health Organisation.
+                        </p>
+                        <a target="_blank" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+
+
+                <div class="card resource-card">
+
+                    <div class="card-body">
+                        <h4 class="card-title">Q&A on Coronavirus Pandemic (COVID-19)</h4>
+                        <p class="card-text">
+                            Your questions on the Coronavirus, answered by the World Health Organisation.
+                        </p>
+                        <a target="_blank" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/q-a-coronaviruses#:~:text=protect" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModal3Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModal3Label">About this dashboard</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Resources used in this project:
+                    <ul>
+                        <li><a class="modal-link" href="https://covid19api.com/">Covid19API - A free API for data on the Coronavirus.</a></li>
+                        <li><a class="modal-link" href="https://www.who.int/">WHO - Resources on Coronavirus.</a></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <small>Disclaimer: The developer, Varun Joshi, does not verify & is not responsible for the data displayed on this dashboard. Please visit <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019" style="color: dodgerblue;" class="modal-link">WHO</a> for accurate information.</small>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>
